@@ -1,35 +1,42 @@
 console.log('starting password manager');
 
-//include 3rd party modules, libraries.
+var storage = require('node-persist'); 
+storage.initSync();
 
-var storage = require('node-persist'); //storage object
-storage.initSync(); //require to start writing and saving variables.
+//method createAccount(account)
+//attributes 
+//account.name Facebook
+//account.username User12!
+//account.password Password123!
+function createAccount(account){
+    var accounts = storage.getItemSync('accounts');
+    if (typeof accounts === 'undefined'){
+        accounts = [];
+    }
+    
+    accounts.push(account);
+    storage.setItemSync('accounts', accounts);
+    return account;
+}
 
-//save a new variable to local machine and we can access it later ('key', 'value')
-//you can store variable, objects, arrays.
+function getAccount (accountName){
+    var accounts = storage.getItemSync('accounts');
+    var matchedAccount;
+    
+    accounts.forEach(function(account){
+        if (account.name === accountName){
+            matchedAccount = account;
+        }
+    });
+    
+    return matchedAccount;
+}
 
+//createAccount({
+//    name: 'Facebook',
+//    username: 'someemail',
+//    password: 'Password123!'
+//});
 
-//storage.setItemSync('accounts',[{
-//    username: 'Brown',
-//    balance: 0
-//}]);
-
-//get variable storage on local machine ('key')
-var accounts = storage.getItemSync('accounts');
-
-/**********************
-quick challenge
-push a new account
-save using setItemSync
-***********************/
-
-accounts.push({
-    username: 'Jenny',
-    balance: 10
-});
-
-//storage.setItemSync('accounts', accounts);
-var acc = storage.getItemSync('accounts');
-
-console.log(acc);
-
+var facebookAccount = getAccount('Facebook');
+console.log(facebookAccount);
