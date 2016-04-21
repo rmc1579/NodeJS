@@ -3,6 +3,55 @@ console.log('starting password manager');
 var storage = require('node-persist'); 
 storage.initSync();
 
+//Commands Needed:
+//create
+//  --name
+//  --username
+//  --password
+
+//get
+//  --name
+
+
+var argv = require('yargs')
+    .command('create','Create a new account', function(yargs){
+        yargs.options({
+            name: {
+                demand: true,
+                alias: 'n',
+                description: 'Account name (eg: Twitter, Facebook)',
+                type: 'string'
+            },
+            username: {
+                demand: true,
+                alias: 'u',
+                description: 'Account username or email',
+                type: 'string'
+            },
+            password: {
+                demand: true,
+                alias: 'p',
+                description: 'Account password',
+                type: 'string'
+            }
+        }).help('help');//adds help option
+    })
+    .command('get','Get an existing account', function(yargs){
+        yargs.options({
+            name: {
+                demand: true,
+                alias: 'n',
+                description: 'Account name (eg: Twitter, Facebook)',
+                type: 'string'
+            }
+        }).help('help');//adds help option
+    })
+    .help('help')
+    .argv;
+var command = argv._[0];
+
+
+
 //method createAccount(account)
 //attributes 
 //account.name Facebook
@@ -32,11 +81,22 @@ function getAccount (accountName){
     return matchedAccount;
 }
 
-//createAccount({
-//    name: 'Facebook',
-//    username: 'someemail',
-//    password: 'Password123!'
-//});
-
-var facebookAccount = getAccount('Facebook');
-console.log(facebookAccount);
+if (command === 'create'){
+    var createdAccount = createAccount({
+        name: argv.name,
+        username: argv.username,
+        password: argv.password
+    });
+    console.log('Account created!');
+    console.log(createdAccount);
+}
+if (command === 'get'){
+    var fetchAccount = getAccount(argv.name);
+    if(typeof fetchAccount === 'undefined'){
+        console.log('Account not found!');
+    }
+    else{
+        console.log('Account found!');
+        console.log(fetchAccount);
+    }
+}
